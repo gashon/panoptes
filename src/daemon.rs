@@ -18,7 +18,7 @@ pub fn daemonize() -> Result<(), Box<dyn Error>> {
     fork?();
     // disconnect session from terminal
     tryret!(libc::setsid(), DaemonizeError::Detach)?;
-    fork?();
+    fork?();    
     redirect_streams()
 }
 
