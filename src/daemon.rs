@@ -15,9 +15,9 @@ macro_rules! try_ret {
 }
 
 pub fn daemonize() -> Result<(), Box<dyn Error>> {
-    fork()?;  // Fixed this line
+    fork()?;  
     try_ret!(libc::setsid(), DaemonizeError::Detach)?;  
-    fork()?;  // Fixed this line
+    fork()?;  
     redirect_streams()
 }
 
