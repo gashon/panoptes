@@ -12,7 +12,7 @@ struct Ping {
     activity: String,
 }
 
-static POLLING_DURATION_IN_SECONDS: u64 = 60;
+static POLLING_DURATION_IN_SECONDS: u64 = 120;
 
 fn make_request(http: &HttpClient, password: &str) -> Result<(), reqwest::Error> {
     let current_application = monitor::get_current_window().unwrap_or("Unknown".to_string());
