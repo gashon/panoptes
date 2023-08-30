@@ -14,6 +14,20 @@ struct Ping {
 
 static POLLING_DURATION_IN_SECONDS: u64 = 60;
 
+fn make_request(http: &HttpClient, password: &str) -> Result<(), reqwest::Error> {
+    let current_application = monitor::get_current_window().unwrap_or("Unknown".to_string());
+    http.post("https://live.ghussein.org/api/desktop")
+        .json(&Ping {
+            activity: current_application,
+        })
+        .header(
+            "Authorization",
+            format!("Bearer {}", password),
+        )
+        .send()?;
+    Ok(())
+}
+
 fn main() {
     let password = match env::var("OPTES_PASSWORD") {
         Ok(value) => value,
@@ -37,27 +51,8 @@ fn main() {
     let http = HttpClient::new();
 
     loop {
-        let req = || -> Result<(), reqwest::Error> {
-            let current_application = monitor::get_current_window().unwrap_or("Unavailable".to_string());
-            http.post("https://live.ghussein.org/api/desktop")
-                .json(&Ping {
-                    activity: current_application,
-                })
-                .header(
-                    "Authorization",
-                    format!("Bearer {}", password),
-                )
-                .send()?;
-            Ok(())
-        };
-
-        if let Err(err) = req() {
+        if let Err(err) = make_request(&http, &password) {
             eprintln!("{}", err);
-        }
-
-        match monitor::get_current_window() {
-            Ok(name) => println!("Current active window: {}", name),
-            Err(err) => eprintln!("An error occurred: {}", err),
         }
 
         sleep(tick_duration);
