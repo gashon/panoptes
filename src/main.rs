@@ -12,6 +12,8 @@ struct Ping {
     activity: String,
 }
 
+static POLLING_DURATION_IN_SECONDS: u64 = 60;
+
 fn main() {
     let password = match env::var("OPTES_PASSWORD") {
         Ok(value) => value,
@@ -31,7 +33,7 @@ fn main() {
         }
     }
 
-    let tick_duration = Duration::from_secs(1);
+    let tick_duration = Duration::from_secs(POLLING_DURATION_IN_SECONDS);
     let http = HttpClient::new();
 
     loop {
@@ -46,7 +48,6 @@ fn main() {
                     format!("Bearer {}", password),
                 )
                 .send()?;
-            println!("sent req");
             Ok(())
         };
 
